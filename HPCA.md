@@ -1,29 +1,71 @@
 # HPC architectures
 
--   Shared memory
+## Parallel architecture
 
-    Multiple processors share a single memory space 
+### (S/M)I(S/M)D
 
-    Communication via reads/writes to memory
+## SIMD
 
-    -   Simple to program, use maintain
-    -   Difficult scaling: access to memory simultaneously 
-    -   Sophisticated hardware for cache coherency
+-   e.g. vector processors
 
--   Distributed memory
+![image-20191210181947741](https://i.imgur.com/CVsEbOi.png)
 
-    Each processing unit has its own memory space 
+## MIMD
 
-    -   Highly scalable
-    -   Relies on interconnection quality
-    -   Job’s locality
-    -   High system management overhead potentially
+#### **Shared memory** MIMD-SM
 
--   Distributed shared memory clusters
+Multiple processors share a single memory space. Communication via reads/writes to memory.
 
-    **Dominate** architecture. Shared memory within one node, distributed memory between nodes
+-   **Simple** to program, use and maintain
+-   Difficult scaling: access to **memory** simultaneously 
+-   Sophisticated hardware for **cache coherency**
 
-    Each Shared memory block is known as a ***node***. Nodes can also contain accelerators
+##### SMP Symmetric MultiProcessing
+
+Equal access to all parts of memory i.e. **same** latency and bandwidth.
+
+![image-20191210182741124](https://i.imgur.com/tgSxDMn.png)
+
+-   e.g. any multicore laptop/PC/server 
+
+##### NUMA Non Uniform Memory Access
+
+-   cache-coherent: cc
+
+Each processor has some fast **local** memory. Direct access to slower remote memory via global address space.
+
+-   modern multi-core processors are NUMA to some degree. 
+
+![image-20191210183541193](https://i.imgur.com/KRWymLO.png)
+
+#### **Distributed memory** MIMD-DM
+
+Each processing unit has its own memory space. Each runs its own **copy of the OS**. No interaction except via the interconnect.
+
+-   Highly scalable
+-   Adding processors increases memory bandwidth 
+-   Relies on interconnection quality
+-   Job’s locality
+-   High system management overhead potentially
+
+![image-20191210182403353](https://i.imgur.com/cjjhOaW.png)
+
+#### Distributed shared memory clusters
+
+**Dominate** architecture. Shared memory within one node, distributed memory between nodes.
+
+Each Shared memory block is known as a ***node***. Nodes can also contain accelerators.
+
+-   constructed as a standard distributed memory machine • but with more powerful nodes
+-   hard to take advantage of mixed architecture
+-   complicated to understand performance: combination of interconnect and memory system behaviour 
+
+![Screenshot 2019-12-10 at 18.44.52](https://i.imgur.com/fCpCRqU.png)
+
+## Batch system 
+
+-   Front end for user, running Unix commands, editing files, compiling code etc.
+-   Back end for running application codes. Not interactive.
 
 ## Compared to Cloud Computing
 
@@ -35,7 +77,11 @@
 
 ## Compiler
 
+Source code -> compiler -> object code -> linker -> executable 
 
+### IR intermediate representation
+
+![image-20191210181316073](https://i.imgur.com/K240Qgy.png)
 
 # HPC hardware
 
@@ -242,6 +288,12 @@ Simultaneous multithreading (SMT) (Hyperthreading) tries to fill **spare instruc
 -   Delaying
 -   Holding data 
 
+### Multiprocessors 
+
+In a distributed memory multiprocessor, each node runs a separate copy of the operating system. Processes **cannot** migrate between nodes
+
+In a shared memory multiprocessor, one copy of the operating system manages all the CPUs. Processes **can** migrate between CPUs
+
 ### SIMD
 
 256 GFlop/s: 2 GHz x 4 vector instruction x 2 FMA instruction x 16 cores 
@@ -383,6 +435,83 @@ When a graph is divided into two equal parts and the number of links connecting 
 
 
 ## Storage
+
+-   HSM hierarchical storage management system
+-   Hierarchical devices
+
+## FPGA (Field Programmable Gate Array)\
+
+An IC that can be configured to perform different tasks. 
+
+- No instructions; unless you create some yourself 
+- No instruction cache misses/hits to worry about
+- No data prefetching; unless you write the logic
+- No data cache misses/hits to worry about 
+- No need to worry about 32/64 bits; you can use any number of bits (e.g. 42) 
+- No need to worry about expensive vs cheap instructions (except running out of space on the FPGA) 
+
+### Programming Steps 
+
+Programming -> synthesis -> place -> route ->timing/validation ->generation of bitstream
+
+### Challenges
+
+-   **Partition** (or splitting) of a design: an FPGA has a limited amount of space; it is important to port the correct kernel. 
+-   Hard to program, debug
+-   Slow memory, FP calculation
+-   Algorithm might not be suitable 
+
+### Performance, advantages
+
+-   Lower clock frequency
+-   Use custom made hardware circuitry to perform **multiple** sequential and parallel operation per clock cycle
+-   Several orders of magnitude of parallelism is possible (especially true for fixed-precision calculations)
+-   Very deep pipelines using flip/flops to store temporary values 
+-   No jitter/latency (unexpected delays) in processing data
+-   Super fast BRAM and fast High bandwidth memory availability
+-   Direct connection to peripherals (network and memory devices)
+-   Performance per watt is stellar (ideal for IoT, embedded devices)
+
+### Compared to CPU/GPGPU
+
+-   Different workflow compared to CPUs or GPGPUs; 
+
+-   Data flows across the pre-defined hardware instructions vs the instructions/data fetching of CPUs/GPGPUs; 
+
+-   FPGAs have a constant throughput of data without any jitters; very important for specific applications (networking, safety); 
+
+-   FPGAs use less energy than CPUs or GPGPUs; very important for specific applications (embedded, IoT); 
+
+-   ASICs use even less energy and have better performance (than FPGAs). 
+
+### CLB configurable logic block
+
+-   Logic functions, implemented as LUTs (lookup tables)
+-   Multiplexers
+-   Flip-flops/registers
+-   Encoders/Decoders 
+
+### Other
+
+-   I/O: to the Host via PCIe, ...
+-   BRAM: ~L1 cache
+-   DRAM: ~DRAM for CPU
+-   HBM2
+
+### IC integrated circuit
+
+Dedicated chips that pack together tens/hundreds/thousands of discrete **electronic components**. 
+
+-   Designed for a broad range of use.
+
+#### ASIC application-Specific Integrated Circuit 
+
+-   Designed for a specific application. 
+
+Compare:
+
+-   ASICs are custom made chips, very expensive and time-consuming to produce and **cannot** be modified once manufactured (the algorithms is etched on the fabric) 
+-   FPGAs are generic chips that can be programmed (and **reprogrammed**) to implement several algorithms ]
 
 
 
